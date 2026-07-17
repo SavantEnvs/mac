@@ -1,0 +1,15 @@
+project: savantenvs/mac
+target: mac
+
+# Raw file-input target: the upstream mac-improved CLI (its own main) reads the input file. The VM can
+# loop forever on a backward IF/IFN jump; Mayhem's per-input timeout below is the only hang bound.
+cmds:
+  - cmd: /mayhem/build/mac @@
+    timeout: 5
+
+# Seeds are known-good, non-crashing VM programs. Upstream's mac-improved/sum200.mac is deliberately
+# NOT a seed: it underflows the VM stack (stack[-1] read in ADD, mac-improved/mac.c:117) — a real
+# project defect the fuzzer finds on its own — so it is not a passing input.
+testsuite:
+  - https://$MAYHEM_DOMAIN/$MAYHEM_PROJECT/$MAYHEM_TARGET/testsuite.tar
+  - file://mayhem/mac/testsuite
